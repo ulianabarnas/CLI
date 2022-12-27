@@ -1,6 +1,7 @@
 const fs = require('fs').promises;
 const path = require('path');
 const shortid = require('shortid');
+require('colors');
 
 const contactsPath = path.resolve(__dirname, 'db/contacts.json');
 
@@ -21,7 +22,12 @@ async function listContacts() {
 
 async function getContactById(contactId) {
   const db = await readDb();
-  const contact = db.filter(contact => contact.id === contactId);
+  const contact = db.find(contact => contact.id === contactId);
+
+  if (!contact) {
+    throw new Error(` Contact with id:${contactId} not found `.bgRed);
+  }
+
   return contact;
 }
 
@@ -39,6 +45,8 @@ async function addContact(name, email, phone) {
   db.push(contact);
 
   await writeDb(db);
+
+  return contact;
 }
 
 module.exports = {

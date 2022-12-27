@@ -5,6 +5,7 @@ const {
   removeContact,
   addContact,
 } = require('./contacts');
+require('colors');
 
 const program = new Command();
 program
@@ -19,33 +20,54 @@ program.parse(process.argv);
 const argv = program.opts();
 
 async function invokeAction({ action, id, name, email, phone }) {
-  let contacts;
-
   switch (action) {
     case 'list':
-      contacts = await listContacts();
-      console.table(contacts);
+      try {
+        const contacts = await listContacts();
+
+        console.table(contacts);
+      } catch (error) {
+        console.warn('❌', error.message);
+      }
       break;
 
     case 'get':
-      const contact = await getContactById(id);
-      console.table(contact);
+      try {
+        const contact = await getContactById(id);
+
+        console.log('✅', ' Success! '.bgGreen);
+        console.table(contact);
+      } catch (error) {
+        console.warn('❌', error.message);
+      }
       break;
 
     case 'add':
-      await addContact(name, email, phone);
-      contacts = await listContacts();
-      console.table(contacts);
+      try {
+        const newContact = await addContact(name, email, phone);
+
+        console.log('✅', ' The contact was successfully added '.bgGreen);
+        console.table(newContact);
+      } catch (error) {
+        console.warn('❌', error.message);
+      }
       break;
 
     case 'remove':
-      await removeContact(id);
-      contacts = await listContacts();
-      console.table(contacts);
+      try {
+        const contact = await getContactById(id);
+
+        console.log('✅', ' Success! You deleted this contact. '.bgGreen);
+        console.table(contact);
+
+        await removeContact(id);
+      } catch (error) {
+        console.log('❌', error.message);
+      }
       break;
 
     default:
-      console.warn('\x1B[31m Unknown action type!');
+      console.warn('❌', '\x1B[31m Unknown action type!');
   }
 }
 
