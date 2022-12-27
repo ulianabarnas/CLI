@@ -19,27 +19,29 @@ program.parse(process.argv);
 const argv = program.opts();
 
 async function invokeAction({ action, id, name, email, phone }) {
+  let contacts;
+
   switch (action) {
     case 'list':
-      //   console.log('invoke list');
-      const contacts = await listContacts();
+      contacts = await listContacts();
       console.table(contacts);
       break;
 
     case 'get':
-      //   console.log('invoke get');
       const contact = await getContactById(id);
       console.table(contact);
       break;
 
     case 'add':
-      //   console.log('invoke add');
       await addContact(name, email, phone);
+      contacts = await listContacts();
+      console.table(contacts);
       break;
 
     case 'remove':
-      //   console.log('invoke remove');
       await removeContact(id);
+      contacts = await listContacts();
+      console.table(contacts);
       break;
 
     default:
@@ -48,12 +50,3 @@ async function invokeAction({ action, id, name, email, phone }) {
 }
 
 invokeAction(argv);
-// invokeAction({ action: 'list' });
-// invokeAction({ action: 'get', id: '1' });
-// invokeAction({
-//   action: 'add',
-//   name: 'Uliana',
-//   email: 'fghf@gf.hgh',
-//   phone: '775-6567-767',
-// });
-// invokeAction({ action: 'remove', id: 'HRxxNdoOC' });
